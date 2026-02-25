@@ -14,18 +14,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// СОКРАЩЕНЫ СЛОВА ДЛЯ КОМПАКТНОСТИ ("дн." вместо "дней", "Проср." вместо "Просрочено")
 const i18n = {
     'ua': {
         name: 'Назва', expiry: 'Термін придатності', barcode: 'Штрих код', qty: 'Кількість',
         addBtn: 'Додати товар', editBtn: 'Зберегти зміни', cancelBtn: 'Скасувати',
-        daysLeft: 'днів', expired: 'Прострочено!', barcodePref: 'ШК:', qtyPref: 'К-ть:',
+        daysLeft: 'дн.', expired: 'Простр.', barcodePref: 'ШК:', qtyPref: 'К-ть:',
         newStorePrompt: 'Введіть назву нового магазину:', loading: 'Завантаження...',
         closeCamera: 'Скасувати', search: 'Пошук за назвою або штрихкодом...'
     },
     'ru': {
         name: 'Название', expiry: 'Срок годности', barcode: 'Штрих код', qty: 'Количество',
         addBtn: 'Добавить товар', editBtn: 'Сохранить изменения', cancelBtn: 'Отмена',
-        daysLeft: 'дней', expired: 'Просрочено!', barcodePref: 'ШК:', qtyPref: 'Кол-во:',
+        daysLeft: 'дн.', expired: 'Проср.', barcodePref: 'ШК:', qtyPref: 'Кол-во:',
         newStorePrompt: 'Введите название нового магазина:', loading: 'Загрузка...',
         closeCamera: 'Отмена', search: 'Поиск по названию или штрихкоду...'
     }
@@ -58,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLangUI();
     setupClearButtons();
     
-    // Поиск
     searchInput.addEventListener('input', () => renderProductsList());
     
     onSnapshot(collection(db, "stores"), (snapshot) => {
@@ -168,7 +168,7 @@ function resetForm() {
     updateClearButtons();
 }
 
-// Форматирование штрихкода (последние 5 цифр жирным и в рамке)
+// Форматирование штрихкода
 function formatBarcode(barcode) {
     if (!barcode) return '';
     if (barcode.length <= 5) {
@@ -198,14 +198,14 @@ function renderProductsList() {
         const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
         const isDanger = diffDays <= 15;
         
-        let dateText = `${expDate.toLocaleDateString(currentLang === 'ru' ? 'ru-RU' : 'uk-UA')} `;
+        // Краткий формат даты (например: 25.10.2024)
+        let dateText = `${expDate.toLocaleDateString('ru-RU')} `; 
         dateText += diffDays < 0 ? `(${i18n[currentLang].expired})` : `(${diffDays} ${i18n[currentLang].daysLeft})`;
 
         const div = document.createElement('div');
         div.className = `product-card ${isDanger ? 'danger' : ''}`;
         const safeName = product.name.replace(/'/g, "\\'");
         
-        // Дата и штрихкод в одну строку с разделителем
         div.innerHTML = `
             <div class="product-info-container">
                 <div class="product-header">
@@ -247,7 +247,7 @@ function updateDate() {
     document.getElementById('currentDate').textContent = d.toLocaleDateString(currentLang === 'ru' ? 'ru-RU' : 'uk-UA', options);
 }
 
-// --- ЛОГИКА КРЕСТИКОВ ОЧИСТКИ ---
+// КРЕСТИКИ ОЧИСТКИ
 function setupClearButtons() {
     document.querySelectorAll('.input-wrapper').forEach(wrapper => {
         const input = wrapper.querySelector('input');
@@ -278,7 +278,7 @@ function updateClearButtons() {
     });
 }
 
-// --- ЛОГИКА СКАНЕРА ШТРИХКОДОВ ---
+// СКАНЕР ШТРИХКОДОВ
 scanBtn.addEventListener('click', () => {
     scannerModal.style.display = 'flex';
     html5QrCode = new Html5Qrcode("reader");
@@ -290,7 +290,6 @@ scanBtn.addEventListener('click', () => {
             barcodeInput.value = decodedText;
             updateClearButtons();
             
-            // Если мы используем сканнер для поиска:
             if(document.activeElement === searchInput) {
                 searchInput.value = decodedText;
                 renderProductsList();
@@ -298,7 +297,7 @@ scanBtn.addEventListener('click', () => {
             
             stopScanner();
         },
-        (errorMessage) => { /* Игнорируем фоновые ошибки */ }
+        (errorMessage) => { }
     ).catch((err) => {
         alert("Помилка доступу до камери / Ошибка доступа к камере");
         stopScanner();
