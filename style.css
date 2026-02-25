@@ -63,9 +63,10 @@ body::after {
     box-shadow: var(--glass-shadow);
 }
 
-.logo-container svg {
+.logo-container .logo {
     height: 35px;
     width: auto;
+    object-fit: contain;
 }
 
 .store-selector {
@@ -139,7 +140,7 @@ body::after {
 .lang-switch input:not(:checked) ~ .lang-labels .ua-label,
 .lang-switch input:checked ~ .lang-labels .ru-label { color: var(--primary-red); }
 
-/* Форма */
+/* Форма (СИММЕТРИЧНАЯ СЕТКА) */
 .glass-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -153,29 +154,48 @@ body::after {
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 12px;
-    margin-bottom: 15px;
+    grid-template-columns: repeat(4, 1fr); /* Строго 4 равные ячейки */
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.input-group { display: flex; flex-direction: column; gap: 4px; }
-.input-group label { font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
-input {
-    padding: 10px 12px; border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.8);
-    font-size: 14px; outline: none; transition: 0.3s;
+.input-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+    width: 100%;
 }
-input:focus { border-color: var(--primary-red); box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.1); }
+.input-group label { 
+    font-size: 11px; 
+    font-weight: 600; 
+    color: var(--text-light); 
+    text-transform: uppercase; 
+}
+input {
+    width: 100%; /* Заставляет input занять ровно свою ячейку */
+    box-sizing: border-box;
+    padding: 12px 14px; 
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.1); 
+    background: rgba(255,255,255,0.8);
+    font-size: 14px; 
+    outline: none; 
+    transition: 0.3s;
+}
+input:focus { 
+    border-color: var(--primary-red); 
+    box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.1); 
+}
 
 button[type="submit"] {
     background: var(--primary-red); color: white; border: none;
-    padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600;
+    padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 600;
     cursor: pointer; width: 100%; transition: 0.2s;
 }
 button.cancel-btn {
     background: #e5e5ea; color: var(--text-dark); border: none;
-    padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600;
-    cursor: pointer; width: 100%; margin-top: 8px; display: none;
+    padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 600;
+    cursor: pointer; width: 100%; margin-top: 10px; display: none;
 }
 
 /* Компактные карточки */
@@ -185,7 +205,7 @@ button.cancel-btn {
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 15px;
-    padding: 12px 15px;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -197,28 +217,39 @@ button.cancel-btn {
 }
 
 .product-info {
-    display: flex; flex-direction: column; gap: 3px;
+    display: flex; flex-direction: column; gap: 5px;
 }
-.product-name { font-size: 15px; font-weight: 700; }
+.product-name { font-size: 16px; font-weight: 700; }
 .product-details {
-    font-size: 12px; color: var(--text-light); display: flex; gap: 12px; flex-wrap: wrap;
+    font-size: 13px; color: var(--text-light); display: flex; gap: 15px; flex-wrap: wrap;
 }
 .product-details span strong { color: var(--text-dark); }
 .danger .product-details span strong.exp-date { color: var(--primary-red); }
 
-.product-actions { display: flex; gap: 8px; }
+.product-actions { display: flex; gap: 10px; }
 .action-btn {
-    width: 32px; height: 32px; border-radius: 50%;
+    width: 36px; height: 36px; border-radius: 50%;
     display: flex; justify-content: center; align-items: center;
     border: none; background: rgba(255,255,255,0.9);
-    font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer;
+    font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer;
 }
 .action-btn.edit { color: #007aff; }
 .action-btn.delete { color: var(--primary-red); }
+
+/* Адаптивность для телефонов и планшетов */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2x2 ячейки на планшетах */
+    }
+}
 
 @media (max-width: 500px) {
     .header { flex-direction: column; align-items: flex-start; }
     .store-selector { width: 100%; }
     .store-selector select { flex-grow: 1; }
     .header-info { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
+    
+    .form-grid {
+        grid-template-columns: 1fr; /* 1 колонка на совсем узких экранах */
+    }
 }
