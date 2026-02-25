@@ -15,7 +15,7 @@
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
-    touch-action: manipulation; /* Отключает зум по двойному тапу */
+    touch-action: manipulation;
 }
 
 body {
@@ -34,14 +34,8 @@ body::before, body::after {
     z-index: -1;
     filter: blur(80px);
 }
-body::before {
-    width: 300px; height: 300px; background: rgba(227, 6, 19, 0.2);
-    top: -50px; left: -50px;
-}
-body::after {
-    width: 400px; height: 400px; background: rgba(255, 255, 255, 0.8);
-    bottom: -100px; right: -100px;
-}
+body::before { width: 300px; height: 300px; background: rgba(227, 6, 19, 0.2); top: -50px; left: -50px; }
+body::after { width: 400px; height: 400px; background: rgba(255, 255, 255, 0.8); bottom: -100px; right: -100px; }
 
 .container {
     max-width: 800px;
@@ -50,248 +44,73 @@ body::after {
 
 /* Шапка */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 20px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 12px 20px;
-    border-radius: 16px;
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+    gap: 15px; margin-bottom: 20px; background: var(--glass-bg);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    padding: 12px 20px; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
 }
-
-/* Группировка Лого + Выбор магазина */
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.logo-container .logo {
-    height: 30px; 
-    width: auto;
-    object-fit: contain;
-    display: block;
-}
-
-.store-selector {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.store-selector select {
-    padding: 6px 12px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.1);
-    background: rgba(255,255,255,0.7);
-    font-size: 14px;
-    outline: none;
-    font-weight: 600;
-    height: 32px;
-}
-
-.icon-btn {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: var(--primary-red);
-    color: white;
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(227,6,19,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.header-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 5px;
-}
-
-.current-date {
-    font-size: 13px;
-    color: var(--text-light);
-    font-weight: 500;
-}
+.header-left { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.logo-container .logo { height: 30px; width: auto; object-fit: contain; display: block; }
+.store-selector { display: flex; align-items: center; gap: 8px; }
+.store-selector select { padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); font-size: 14px; outline: none; font-weight: 600; height: 32px; }
+.icon-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--primary-red); color: white; font-size: 18px; line-height: 1; cursor: pointer; box-shadow: 0 2px 5px rgba(227,6,19,0.3); display: flex; align-items: center; justify-content: center; }
+.header-info { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.current-date { font-size: 13px; color: var(--text-light); font-weight: 500; }
 
 /* Язык */
-.lang-switch {
-    display: flex;
-    align-items: center;
-    background: rgba(0,0,0,0.05);
-    border-radius: 20px;
-    padding: 3px;
-    position: relative;
-    cursor: pointer;
-    width: 70px;
-    height: 28px;
-}
+.lang-switch { display: flex; align-items: center; background: rgba(0,0,0,0.05); border-radius: 20px; padding: 3px; position: relative; cursor: pointer; width: 70px; height: 28px; }
 .lang-switch input { display: none; }
-.lang-slider {
-    position: absolute; top: 3px; left: 3px;
-    width: 32px; height: 22px;
-    background: white; border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
+.lang-slider { position: absolute; top: 3px; left: 3px; width: 32px; height: 22px; background: white; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
 .lang-switch input:checked + .lang-slider { transform: translateX(32px); }
-.lang-labels {
-    display: flex; width: 100%; justify-content: space-around;
-    z-index: 1; font-size: 11px; font-weight: 600; pointer-events: none;
-}
-.lang-labels span {
-    width: 50%; text-align: center; color: var(--text-light); transition: color 0.3s;
-}
-.lang-switch input:not(:checked) ~ .lang-labels .ua-label,
-.lang-switch input:checked ~ .lang-labels .ru-label { color: var(--primary-red); }
+.lang-labels { display: flex; width: 100%; justify-content: space-around; z-index: 1; font-size: 11px; font-weight: 600; pointer-events: none; }
+.lang-labels span { width: 50%; text-align: center; color: var(--text-light); transition: color 0.3s; }
+.lang-switch input:not(:checked) ~ .lang-labels .ua-label, .lang-switch input:checked ~ .lang-labels .ru-label { color: var(--primary-red); }
 
-/* Компактная форма */
-.glass-panel {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 15px; 
-    box-shadow: var(--glass-shadow);
-    margin-bottom: 20px;
-}
+/* Форма */
+.glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; box-shadow: var(--glass-shadow); margin-bottom: 20px; }
+.form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+.input-group { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.input-group label { font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
 
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px; 
-    margin-bottom: 15px;
-}
+input { width: 100%; box-sizing: border-box; height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.8); font-size: 14px; font-family: inherit; outline: none; transition: 0.3s; }
+input[type="date"] { -webkit-appearance: none; appearance: none; }
+input:focus { border-color: var(--primary-red); box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.1); }
 
-.input-group { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 4px; 
-    width: 100%;
-}
-.input-group label { 
-    font-size: 11px; 
-    font-weight: 600; 
-    color: var(--text-light); 
-    text-transform: uppercase; 
-}
+/* Кнопка сканера внутри поля штрихкода */
+.barcode-wrapper { display: flex; gap: 5px; height: 40px; }
+.barcode-wrapper input { flex-grow: 1; }
+.scan-btn { width: 40px; height: 40px; border-radius: 10px; border: none; background: #e5e5ea; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+.scan-btn:active { background: #d1d1d6; }
+.scan-btn svg { width: 24px; height: 24px; color: var(--text-dark); }
 
-/* Идеально ровные поля ввода */
-input {
-    width: 100%; 
-    box-sizing: border-box;
-    height: 40px; 
-    padding: 0 12px; 
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.1); 
-    background: rgba(255,255,255,0.8);
-    font-size: 14px; 
-    font-family: inherit;
-    outline: none; 
-    transition: 0.3s;
-}
+button[type="submit"], button.cancel-btn { height: 40px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
+button[type="submit"] { background: var(--primary-red); color: white; }
+button.cancel-btn { background: #e5e5ea; color: var(--text-dark); margin-top: 8px; display: none; }
 
-/* Сброс специфичных стилей браузера для даты */
-input[type="date"] {
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-input:focus { 
-    border-color: var(--primary-red); 
-    box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.1); 
-}
-
-button[type="submit"], button.cancel-btn {
-    height: 40px; 
-    border: none;
-    border-radius: 10px;
-    font-size: 14px; 
-    font-weight: 600;
-    cursor: pointer; 
-    width: 100%; 
-    transition: 0.2s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-button[type="submit"] {
-    background: var(--primary-red); 
-    color: white; 
-}
-
-button.cancel-btn {
-    background: #e5e5ea; 
-    color: var(--text-dark); 
-    margin-top: 8px; 
-    display: none;
-}
-
-/* Компактные карточки */
+/* Карточки */
 .product-list { display: flex; flex-direction: column; gap: 8px; }
-.product-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 12px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-.product-card.danger {
-    background: var(--danger-bg);
-    border-color: var(--danger-border);
-}
-
+.product-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+.product-card.danger { background: var(--danger-bg); border-color: var(--danger-border); }
 .product-info { display: flex; flex-direction: column; gap: 4px; }
 .product-name { font-size: 15px; font-weight: 700; }
-.product-details {
-    font-size: 13px; color: var(--text-light); display: flex; gap: 15px; flex-wrap: wrap;
-}
+.product-details { font-size: 13px; color: var(--text-light); display: flex; gap: 15px; flex-wrap: wrap; }
 .product-details span strong { color: var(--text-dark); }
 .danger .product-details span strong.exp-date { color: var(--primary-red); }
-
 .product-actions { display: flex; gap: 8px; }
-.action-btn {
-    width: 32px; height: 32px; border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
-    border: none; background: rgba(255,255,255,0.9);
-    font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer;
-}
+.action-btn { width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; background: rgba(255,255,255,0.9); font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
 .action-btn.edit { color: #007aff; }
 .action-btn.delete { color: var(--primary-red); }
 
-/* Адаптивность для телефонов и планшетов */
-@media (max-width: 768px) {
-    .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
+/* Модальное окно камеры */
+.modal-overlay { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+.modal-content { background: white; padding: 15px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+.close-btn { margin-top: 15px; background: #e5e5ea; color: var(--primary-red); padding: 12px; border: none; border-radius: 12px; width: 100%; font-size: 16px; font-weight: 600; cursor: pointer; }
 
+/* Адаптивность */
+@media (max-width: 768px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 500px) {
-    .header-left {
-        width: 100%;
-        justify-content: space-between;
-    }
+    .header-left { width: 100%; justify-content: space-between; }
     .store-selector { flex-grow: 1; justify-content: flex-end; }
     .header-info { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
-    
-    .form-grid {
-        grid-template-columns: 1fr; 
-    }
+    .form-grid { grid-template-columns: 1fr; }
 }
