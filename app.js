@@ -20,29 +20,32 @@ const i18n = {
         addBtn: 'Додати товар', editBtn: 'Зберегти зміни', cancelBtn: 'Скасувати',
         daysLeft: 'днів', expired: 'Прострочено!', barcodePref: 'ШК:', qtyPref: 'К-ть:',
         newStorePrompt: 'Введіть назву нового магазину:', loading: 'Завантаження...',
-        closeCamera: 'Скасувати'
+        closeCamera: 'Скасувати', search: 'Пошук за назвою або штрихкодом...'
     },
     'ru': {
         name: 'Название', expiry: 'Срок годности', barcode: 'Штрих код', qty: 'Количество',
         addBtn: 'Добавить товар', editBtn: 'Сохранить изменения', cancelBtn: 'Отмена',
         daysLeft: 'дней', expired: 'Просрочено!', barcodePref: 'ШК:', qtyPref: 'Кол-во:',
         newStorePrompt: 'Введите название нового магазина:', loading: 'Загрузка...',
-        closeCamera: 'Отмена'
+        closeCamera: 'Отмена', search: 'Поиск по названию или штрихкоду...'
     }
 };
 
 let currentLang = localStorage.getItem('lang') === 'ru' ? 'ru' : 'ua';
 let editingId = null;
 let currentStoreId = null;
-let html5QrCode = null; // Переменная для камеры
+let html5QrCode = null;
+let allProducts = []; // Все загруженные товары текущего магазина
 
+// Элементы UI
 const toggleLang = document.getElementById('langToggle');
 const storeSelect = document.getElementById('storeSelect');
 const addStoreBtn = document.getElementById('addStoreBtn');
 const productForm = document.getElementById('productForm');
 const btnCancel = document.getElementById('btn-cancel');
+const searchInput = document.getElementById('searchInput');
 
-// Элементы сканера
+// Сканер
 const scanBtn = document.getElementById('scanBtn');
 const scannerModal = document.getElementById('scannerModal');
 const closeScannerBtn = document.getElementById('closeScannerBtn');
@@ -53,6 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     toggleLang.checked = currentLang === 'ru';
     updateLangUI();
+    setupClearButtons();
+    
+    // Поиск
+    searchInput.addEventListener('input', () => renderProductsList());
     
     onSnapshot(collection(db, "stores"), (snapshot) => {
         const stores = [];
@@ -70,7 +77,7 @@ toggleLang.addEventListener('change', (e) => {
     currentLang = e.target.checked ? 'ru' : 'ua';
     localStorage.setItem('lang', currentLang);
     updateLangUI();
-    if (currentStoreId) loadProducts(currentStoreId);
+    renderProductsList();
 });
 
 addStoreBtn.addEventListener('click', async () => {
@@ -106,10 +113,10 @@ function loadProducts(storeId) {
     if (unsubProducts) unsubProducts();
     const q = query(collection(db, "products"), where("storeId", "==", storeId));
     unsubProducts = onSnapshot(q, (snapshot) => {
-        const products = [];
-        snapshot.forEach(doc => products.push({ id: doc.id, ...doc.data() }));
-        products.sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
-        renderProductsList(products);
+        allProducts = [];
+        snapshot.forEach(doc => allProducts.push({ id: doc.id, ...doc.data() }));
+        allProducts.sort((a, b) => new Date(a.expiry) - new Date(b.expiry));
+        renderProductsList();
     });
 }
 
@@ -118,9 +125,9 @@ productForm.addEventListener('submit', async (e) => {
     if (!currentStoreId) return alert("Выберите магазин!");
 
     const productData = {
-        name: document.getElementById('name').value,
+        name: document.getElementById('name').value.trim(),
         expiry: document.getElementById('expiry').value,
-        barcode: document.getElementById('barcode').value,
+        barcode: document.getElementById('barcode').value.trim(),
         qty: document.getElementById('qty').value,
         storeId: currentStoreId
     };
@@ -145,8 +152,10 @@ window.editProduct = (id, name, expiry, barcode, qty) => {
     document.getElementById('expiry').value = expiry;
     document.getElementById('barcode').value = barcode;
     document.getElementById('qty').value = qty;
+    
     document.getElementById('btn-submit').textContent = i18n[currentLang].editBtn;
     btnCancel.style.display = 'block';
+    updateClearButtons();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -156,15 +165,35 @@ function resetForm() {
     productForm.reset();
     document.getElementById('btn-submit').textContent = i18n[currentLang].addBtn;
     btnCancel.style.display = 'none';
+    updateClearButtons();
 }
 
-function renderProductsList(products) {
+// Форматирование штрихкода (последние 5 цифр жирным и в рамке)
+function formatBarcode(barcode) {
+    if (!barcode) return '';
+    if (barcode.length <= 5) {
+        return `<span class="barcode-highlight">${barcode}</span>`;
+    }
+    const base = barcode.slice(0, -5);
+    const highlight = barcode.slice(-5);
+    return `${base}<span class="barcode-highlight">${highlight}</span>`;
+}
+
+// Отрисовка с учетом поиска
+function renderProductsList() {
     const list = document.getElementById('productList');
     list.innerHTML = '';
     const today = new Date();
     today.setHours(0,0,0,0);
+    
+    const term = searchInput.value.toLowerCase().trim();
+    
+    const filteredProducts = allProducts.filter(p => 
+        p.name.toLowerCase().includes(term) || 
+        p.barcode.includes(term)
+    );
 
-    products.forEach(product => {
+    filteredProducts.forEach(product => {
         const expDate = new Date(product.expiry);
         const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
         const isDanger = diffDays <= 15;
@@ -177,12 +206,14 @@ function renderProductsList(products) {
         const safeName = product.name.replace(/'/g, "\\'");
         
         div.innerHTML = `
-            <div class="product-info">
-                <div class="product-name">${product.name}</div>
+            <div class="product-info-container">
+                <div class="product-header">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-qty-badge">${product.qty} шт.</div>
+                </div>
                 <div class="product-details">
                     <span><strong class="exp-date">${dateText}</strong></span>
-                    <span>${i18n[currentLang].barcodePref} <strong>${product.barcode}</strong></span>
-                    <span>${i18n[currentLang].qtyPref} <strong>${product.qty}</strong></span>
+                    <span>${i18n[currentLang].barcodePref} ${formatBarcode(product.barcode)}</span>
                 </div>
             </div>
             <div class="product-actions">
@@ -203,6 +234,7 @@ function updateLangUI() {
     document.getElementById('btn-submit').textContent = editingId ? t.editBtn : t.addBtn;
     document.getElementById('btn-cancel').textContent = t.cancelBtn;
     document.getElementById('closeScannerBtn').textContent = t.closeCamera;
+    searchInput.placeholder = t.search;
     if(storeSelect.options.length === 0) storeSelect.innerHTML = `<option>${t.loading}</option>`;
     updateDate();
 }
@@ -213,24 +245,51 @@ function updateDate() {
     document.getElementById('currentDate').textContent = d.toLocaleDateString(currentLang === 'ru' ? 'ru-RU' : 'uk-UA', options);
 }
 
-// --- ЛОГИКА СКАНЕРА ШТРИХКОДОВ ---
+// --- ЛОГИКА КРЕСТИКОВ ОЧИСТКИ ---
+function setupClearButtons() {
+    document.querySelectorAll('.input-wrapper').forEach(wrapper => {
+        const input = wrapper.querySelector('input');
+        const clearBtn = wrapper.querySelector('.clear-btn');
+        if (input && clearBtn) {
+            input.addEventListener('input', () => toggleClearBtn(input, clearBtn));
+            clearBtn.addEventListener('click', () => {
+                input.value = '';
+                toggleClearBtn(input, clearBtn);
+                input.focus();
+                if(input.id === 'searchInput') renderProductsList(); // Обновляем поиск сразу
+            });
+            toggleClearBtn(input, clearBtn);
+        }
+    });
+}
 
+function toggleClearBtn(input, clearBtn) {
+    clearBtn.style.opacity = input.value ? '1' : '0';
+    clearBtn.style.pointerEvents = input.value ? 'auto' : 'none';
+}
+
+function updateClearButtons() {
+    document.querySelectorAll('.input-wrapper').forEach(wrapper => {
+        const input = wrapper.querySelector('input');
+        const clearBtn = wrapper.querySelector('.clear-btn');
+        if(input && clearBtn) toggleClearBtn(input, clearBtn);
+    });
+}
+
+// --- ЛОГИКА СКАНЕРА ШТРИХКОДОВ ---
 scanBtn.addEventListener('click', () => {
     scannerModal.style.display = 'flex';
     html5QrCode = new Html5Qrcode("reader");
-    
-    // Настройки сканера (environment - задняя камера)
     const config = { fps: 10, qrbox: { width: 250, height: 150 } };
     
     html5QrCode.start({ facingMode: "environment" }, config, 
         (decodedText) => {
-            // Успешное сканирование
-            document.getElementById('barcode').value = decodedText;
+            const barcodeInput = document.getElementById('barcode');
+            barcodeInput.value = decodedText;
+            updateClearButtons();
             stopScanner();
         },
-        (errorMessage) => {
-            // Ошибки сканирования в реальном времени игнорируем, пока не найдет код
-        }
+        (errorMessage) => { /* Игнорируем фоновые ошибки */ }
     ).catch((err) => {
         alert("Помилка доступу до камери / Ошибка доступа к камере");
         stopScanner();
