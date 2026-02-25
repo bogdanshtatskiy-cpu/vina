@@ -35,7 +35,7 @@ let currentLang = localStorage.getItem('lang') === 'ru' ? 'ru' : 'ua';
 let editingId = null;
 let currentStoreId = null;
 let html5QrCode = null;
-let allProducts = []; // Все загруженные товары текущего магазина
+let allProducts = []; 
 
 // Элементы UI
 const toggleLang = document.getElementById('langToggle');
@@ -205,6 +205,7 @@ function renderProductsList() {
         div.className = `product-card ${isDanger ? 'danger' : ''}`;
         const safeName = product.name.replace(/'/g, "\\'");
         
+        // Дата и штрихкод в одну строку с разделителем
         div.innerHTML = `
             <div class="product-info-container">
                 <div class="product-header">
@@ -213,6 +214,7 @@ function renderProductsList() {
                 </div>
                 <div class="product-details">
                     <span><strong class="exp-date">${dateText}</strong></span>
+                    <span class="detail-divider">•</span>
                     <span>${i18n[currentLang].barcodePref} ${formatBarcode(product.barcode)}</span>
                 </div>
             </div>
@@ -256,7 +258,7 @@ function setupClearButtons() {
                 input.value = '';
                 toggleClearBtn(input, clearBtn);
                 input.focus();
-                if(input.id === 'searchInput') renderProductsList(); // Обновляем поиск сразу
+                if(input.id === 'searchInput') renderProductsList();
             });
             toggleClearBtn(input, clearBtn);
         }
@@ -287,6 +289,13 @@ scanBtn.addEventListener('click', () => {
             const barcodeInput = document.getElementById('barcode');
             barcodeInput.value = decodedText;
             updateClearButtons();
+            
+            // Если мы используем сканнер для поиска:
+            if(document.activeElement === searchInput) {
+                searchInput.value = decodedText;
+                renderProductsList();
+            }
+            
             stopScanner();
         },
         (errorMessage) => { /* Игнорируем фоновые ошибки */ }
