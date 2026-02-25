@@ -28,19 +28,12 @@ body {
 }
 
 body::before, body::after {
-    content: '';
-    position: fixed;
-    border-radius: 50%;
-    z-index: -1;
-    filter: blur(80px);
+    content: ''; position: fixed; border-radius: 50%; z-index: -1; filter: blur(80px);
 }
 body::before { width: 300px; height: 300px; background: rgba(227, 6, 19, 0.2); top: -50px; left: -50px; }
 body::after { width: 400px; height: 400px; background: rgba(255, 255, 255, 0.8); bottom: -100px; right: -100px; }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-}
+.container { max-width: 800px; margin: 0 auto; }
 
 /* Шапка */
 .header {
@@ -72,31 +65,49 @@ body::after { width: 400px; height: 400px; background: rgba(255, 255, 255, 0.8);
 .input-group { display: flex; flex-direction: column; gap: 4px; width: 100%; }
 .input-group label { font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
 
-input { width: 100%; box-sizing: border-box; height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.8); font-size: 14px; font-family: inherit; outline: none; transition: 0.3s; }
+/* Обертка для крестиков и кнопок */
+.input-wrapper { position: relative; display: flex; align-items: center; width: 100%; height: 40px; }
+input { width: 100%; box-sizing: border-box; height: 100%; padding: 0 35px 0 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.8); font-size: 14px; font-family: inherit; outline: none; transition: 0.3s; }
 input[type="date"] { -webkit-appearance: none; appearance: none; }
 input:focus { border-color: var(--primary-red); box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.1); }
 
-/* Кнопка сканера внутри поля штрихкода */
-.barcode-wrapper { display: flex; gap: 5px; height: 40px; }
-.barcode-wrapper input { flex-grow: 1; }
-.scan-btn { width: 40px; height: 40px; border-radius: 10px; border: none; background: #e5e5ea; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+/* Крестики сброса */
+.clear-btn { position: absolute; right: 8px; width: 22px; height: 22px; border-radius: 50%; border: none; background: rgba(0,0,0,0.1); color: var(--text-dark); font-size: 15px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; }
+.clear-btn:active { background: rgba(0,0,0,0.2); }
+
+/* Кнопка сканера */
+.barcode-wrapper input { padding-right: 75px; /* Место под две кнопки */ }
+.barcode-clear { right: 46px; }
+.scan-btn { position: absolute; right: 0; top: 0; width: 40px; height: 40px; border-radius: 0 10px 10px 0; border: 1px solid rgba(0,0,0,0.1); border-left: none; background: #e5e5ea; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
 .scan-btn:active { background: #d1d1d6; }
-.scan-btn svg { width: 24px; height: 24px; color: var(--text-dark); }
+.scan-btn svg { width: 20px; height: 20px; color: var(--text-dark); }
 
 button[type="submit"], button.cancel-btn { height: 40px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
 button[type="submit"] { background: var(--primary-red); color: white; }
 button.cancel-btn { background: #e5e5ea; color: var(--text-dark); margin-top: 8px; display: none; }
 
-/* Карточки */
+/* Поиск */
+.search-panel { margin-bottom: 15px; height: 44px; }
+.search-panel input { border-radius: 12px; font-size: 15px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); box-shadow: 0 2px 10px rgba(0,0,0,0.03); padding-left: 15px; }
+
+/* Карточки товаров */
 .product-list { display: flex; flex-direction: column; gap: 8px; }
 .product-card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
 .product-card.danger { background: var(--danger-bg); border-color: var(--danger-border); }
-.product-info { display: flex; flex-direction: column; gap: 4px; }
-.product-name { font-size: 15px; font-weight: 700; }
-.product-details { font-size: 13px; color: var(--text-light); display: flex; gap: 15px; flex-wrap: wrap; }
+
+.product-info-container { flex-grow: 1; display: flex; flex-direction: column; gap: 6px; margin-right: 15px; min-width: 0; }
+.product-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.product-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
+.product-qty-badge { background: var(--text-dark); color: white; padding: 2px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+
+.product-details { font-size: 13px; color: var(--text-light); display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
 .product-details span strong { color: var(--text-dark); }
 .danger .product-details span strong.exp-date { color: var(--primary-red); }
-.product-actions { display: flex; gap: 8px; }
+
+/* Выделение штрихкода */
+.barcode-highlight { font-weight: 700; color: var(--primary-red); background: rgba(227, 6, 19, 0.08); border: 1px solid rgba(227, 6, 19, 0.3); border-radius: 4px; padding: 1px 4px; margin-left: 1px; }
+
+.product-actions { display: flex; gap: 8px; flex-shrink: 0; }
 .action-btn { width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; background: rgba(255,255,255,0.9); font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
 .action-btn.edit { color: #007aff; }
 .action-btn.delete { color: var(--primary-red); }
@@ -113,4 +124,5 @@ button.cancel-btn { background: #e5e5ea; color: var(--text-dark); margin-top: 8p
     .store-selector { flex-grow: 1; justify-content: flex-end; }
     .header-info { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
     .form-grid { grid-template-columns: 1fr; }
+    .product-details { flex-direction: column; gap: 4px; align-items: flex-start; }
 }
