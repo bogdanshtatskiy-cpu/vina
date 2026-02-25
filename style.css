@@ -76,7 +76,7 @@ input:focus { border-color: var(--primary-red); box-shadow: 0 0 0 2px rgba(227, 
 .clear-btn:active { background: rgba(0,0,0,0.2); }
 
 /* Кнопка сканера */
-.barcode-wrapper input { padding-right: 75px; /* Место под две кнопки */ }
+.barcode-wrapper input { padding-right: 75px; }
 .barcode-clear { right: 46px; }
 .scan-btn { position: absolute; right: 0; top: 0; width: 40px; height: 40px; border-radius: 0 10px 10px 0; border: 1px solid rgba(0,0,0,0.1); border-left: none; background: #e5e5ea; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
 .scan-btn:active { background: #d1d1d6; }
@@ -100,9 +100,11 @@ button.cancel-btn { background: #e5e5ea; color: var(--text-dark); margin-top: 8p
 .product-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
 .product-qty-badge { background: var(--text-dark); color: white; padding: 2px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 
-.product-details { font-size: 13px; color: var(--text-light); display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+/* Дата и Штрихкод в одну линию */
+.product-details { font-size: 13px; color: var(--text-light); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .product-details span strong { color: var(--text-dark); }
 .danger .product-details span strong.exp-date { color: var(--primary-red); }
+.detail-divider { color: rgba(0,0,0,0.2); font-size: 14px; }
 
 /* Выделение штрихкода */
 .barcode-highlight { font-weight: 700; color: var(--primary-red); background: rgba(227, 6, 19, 0.08); border: 1px solid rgba(227, 6, 19, 0.3); border-radius: 4px; padding: 1px 4px; margin-left: 1px; }
@@ -124,5 +126,5 @@ button.cancel-btn { background: #e5e5ea; color: var(--text-dark); margin-top: 8p
     .store-selector { flex-grow: 1; justify-content: flex-end; }
     .header-info { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
     .form-grid { grid-template-columns: 1fr; }
-    .product-details { flex-direction: column; gap: 4px; align-items: flex-start; }
+    /* Убрали перенос для product-details, чтобы всё оставалось в строку */
 }
