@@ -15,6 +15,7 @@
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+    touch-action: manipulation; /* Отключает зум по двойному тапу */
 }
 
 body {
@@ -73,7 +74,7 @@ body::after {
 }
 
 .logo-container .logo {
-    height: 30px; /* Немного уменьшили лого для компактности */
+    height: 30px; 
     width: auto;
     object-fit: contain;
     display: block;
@@ -162,7 +163,7 @@ body::after {
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
-    padding: 15px; /* Уменьшили внутренние отступы */
+    padding: 15px; 
     box-shadow: var(--glass-shadow);
     margin-bottom: 20px;
 }
@@ -170,7 +171,7 @@ body::after {
 .form-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px; /* Уменьшили расстояние между полями */
+    gap: 10px; 
     margin-bottom: 15px;
 }
 
@@ -191,8 +192,8 @@ body::after {
 input {
     width: 100%; 
     box-sizing: border-box;
-    height: 40px; /* Строго заданная высота выравнивает все инпуты, включая дату */
-    padding: 0 12px; /* Убрали вертикальные padding, оставили только по бокам */
+    height: 40px; 
+    padding: 0 12px; 
     border-radius: 10px;
     border: 1px solid rgba(0,0,0,0.1); 
     background: rgba(255,255,255,0.8);
@@ -214,7 +215,7 @@ input:focus {
 }
 
 button[type="submit"], button.cancel-btn {
-    height: 40px; /* Высота кнопок равна высоте полей ввода */
+    height: 40px; 
     border: none;
     border-radius: 10px;
     font-size: 14px; 
